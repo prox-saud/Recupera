@@ -393,11 +393,55 @@
   .foot-col a:hover{opacity:1}
   .foot-base{margin-top:3.5rem;padding-top:1.6rem;border-top:1px solid rgba(236,237,232,.18);font-size:.78rem;opacity:.55;display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem}
 
+  /* ---------- CONTACT MODAL ---------- */
+  .modal{
+    position:fixed;inset:0;z-index:100;display:none;
+    align-items:center;justify-content:center;padding:1.2rem;
+  }
+  .modal.open{display:flex}
+  .modal-back{
+    position:absolute;inset:0;background:rgba(21,36,24,.5);
+    backdrop-filter:blur(6px);animation:fadeBack .3s ease;
+  }
+  @keyframes fadeBack{from{opacity:0}to{opacity:1}}
+  .modal-card{
+    position:relative;width:min(560px,100%);max-height:88vh;overflow:auto;
+    background:var(--paper);border-radius:16px;border:1px solid var(--line);
+    padding:2.4rem;box-shadow:0 40px 90px rgba(21,36,24,.4);
+    animation:cardIn .45s cubic-bezier(.19,.7,.22,1);
+  }
+  @keyframes cardIn{from{opacity:0;transform:translateY(28px) scale(.97)}to{opacity:1;transform:none}}
+  .modal-card h3{font-family:var(--serif);font-weight:400;font-size:1.9rem;line-height:1.15;margin:.6rem 0 .4rem}
+  .modal-card .lead{font-size:.92rem;opacity:.7;margin-bottom:1.6rem}
+  .modal-close{
+    position:absolute;top:1.1rem;right:1.1rem;width:36px;height:36px;border-radius:50%;
+    border:1px solid var(--line);background:none;cursor:pointer;font-size:1rem;line-height:1;
+    color:var(--ink);transition:background .2s;
+  }
+  .modal-close:hover{background:var(--paper-deep)}
+  .field{margin-bottom:1.1rem}
+  .field label{
+    display:block;font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--pine);margin-bottom:.4rem;
+  }
+  .field input,.field select,.field textarea{
+    width:100%;padding:.78rem .9rem;border:1px solid var(--line);border-radius:10px;
+    background:#F4F5F1;font-family:var(--sans);font-size:.95rem;color:var(--ink);
+    transition:border-color .2s;
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--pine)}
+  .field textarea{resize:vertical;min-height:84px}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  @media(max-width:560px){.field-row{grid-template-columns:1fr}}
+  .modal-note{font-size:.75rem;opacity:.55;margin-top:.9rem}
+  .modal-card .btn{width:100%;text-align:center;margin-top:.4rem}
+
   @media(prefers-reduced-motion:reduce){
     html{scroll-behavior:auto}
     .badge svg,.ticker-inner,.tick-ring,.hanger svg,.pulse,.wheel-hint b,.listing,.listing-match .dot{animation:none}
     .rise{animation:none;opacity:1}
     .rise.fade-only{opacity:.6}
+    .modal-back,.modal-card{animation:none}
     .reveal{opacity:1;transform:none;transition:none}
     h2 em::after{transition:none}
     .step,.node,.wheel{transition:none}
@@ -692,6 +736,64 @@
   </div>
 </footer>
 
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-back" data-close></div>
+  <div class="modal-card">
+    <button class="modal-close" data-close aria-label="Close">✕</button>
+    <span class="mono" style="color:var(--pine)" id="modalTag">For brands</span>
+    <h3 id="modalTitle">List your stock</h3>
+    <p class="lead" id="modalLead">Tell us what you need to move. We reply within two working days.</p>
+
+    <form id="contactForm">
+      <div class="field-row">
+        <div class="field">
+          <label for="f-name">Your name</label>
+          <input id="f-name" name="name" type="text" required autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="f-company" id="companyLabel">Brand / company</label>
+          <input id="f-company" name="company" type="text" required autocomplete="organization">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="f-email">Email</label>
+          <input id="f-email" name="email" type="email" required autocomplete="email">
+        </div>
+        <div class="field">
+          <label for="f-location" id="locationLabel">Based in</label>
+          <input id="f-location" name="location" type="text" placeholder="City, country">
+        </div>
+      </div>
+      <div class="field" id="volumeField">
+        <label for="f-volume" id="volumeLabel">Roughly how much stock?</label>
+        <select id="f-volume" name="volume">
+          <option>Under 200 units</option>
+          <option selected>200 - 1,000 units</option>
+          <option>1,000 - 5,000 units</option>
+          <option>5,000+ units</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-category">Category</label>
+        <select id="f-category" name="category">
+          <option selected>Womenswear</option>
+          <option>Menswear</option>
+          <option>Mixed / both</option>
+          <option>Kidswear</option>
+          <option>Accessories</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="f-notes">Anything else?</label>
+        <textarea id="f-notes" name="notes" placeholder="Seasons, markets to avoid, timelines..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-solid" id="modalSubmit">Open pre-filled email</button>
+      <p class="modal-note">This opens your email app with everything filled in - just press send. Your details go only to the Recupera team.</p>
+    </form>
+  </div>
+</div>
+
 <script>
 (function(){
   var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -826,6 +928,88 @@
   window.addEventListener('scroll', onScroll, {passive:true});
   window.addEventListener('resize', onScroll);
   onScroll();
+
+  /* ===== contact modal - builds a pre-filled email ===== */
+  (function(){
+    var EMAIL = 'hello@recupera.co';
+    var modal = document.getElementById('modal');
+    var form = document.getElementById('contactForm');
+    var mode = 'brand';
+    var copy = {
+      brand: {
+        tag:'For brands', title:'List your stock',
+        lead:'Tell us what you need to move. We reply within two working days.',
+        company:'Brand / company', volume:'Roughly how much stock?',
+        location:'Based in', subject:'List my stock'
+      },
+      buyer: {
+        tag:'For buyers', title:'Apply for access',
+        lead:'Tell us about your store. Every member is verified before seeing offers.',
+        company:'Store / company', volume:'Typical order size?',
+        location:'Store location', subject:'Apply for buyer access'
+      }
+    };
+
+    function openModal(m){
+      mode = m;
+      var c = copy[m];
+      document.getElementById('modalTag').textContent = c.tag;
+      document.getElementById('modalTitle').textContent = c.title;
+      document.getElementById('modalLead').textContent = c.lead;
+      document.getElementById('companyLabel').textContent = c.company;
+      document.getElementById('volumeLabel').textContent = c.volume;
+      document.getElementById('locationLabel').textContent = c.location;
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      setTimeout(function(){ document.getElementById('f-name').focus(); }, 60);
+    }
+    function closeModal(){
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    /* wire every mailto CTA to the modal instead */
+    document.querySelectorAll('a[href^="mailto"]').forEach(function(a){
+      var isBuyer = /buyer|access/i.test(a.getAttribute('href') + a.textContent);
+      a.addEventListener('click', function(e){
+        e.preventDefault();
+        openModal(isBuyer ? 'buyer' : 'brand');
+      });
+    });
+    modal.querySelectorAll('[data-close]').forEach(function(el){
+      el.addEventListener('click', closeModal);
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+    });
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var v = function(id){ return document.getElementById(id).value.trim(); };
+      var c = copy[mode];
+      var lines = [
+        'Hi Recupera team,',
+        '',
+        (mode === 'brand' ? 'I have stock to move.' : 'I would like buyer access.'),
+        '',
+        'Name: ' + v('f-name'),
+        (mode === 'brand' ? 'Brand: ' : 'Store: ') + v('f-company'),
+        'Email: ' + v('f-email'),
+        'Location: ' + (v('f-location') || '-'),
+        (mode === 'brand' ? 'Stock volume: ' : 'Order size: ') + v('f-volume'),
+        'Category: ' + v('f-category'),
+        '',
+        'Notes: ' + (v('f-notes') || '-'),
+        '',
+        'Sent from recupera site'
+      ];
+      var url = 'mailto:' + EMAIL +
+        '?subject=' + encodeURIComponent(c.subject + ' - ' + v('f-company')) +
+        '&body=' + encodeURIComponent(lines.join('\n'));
+      window.location.href = url;
+      closeModal();
+    });
+  })();
 })();
 </script>
 </body>
