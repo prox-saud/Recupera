@@ -106,10 +106,9 @@
     align-self:flex-end;z-index:4;width:min(320px,86%);margin-right:.4rem;
     background:var(--paper);border:1px solid var(--line);border-radius:14px;
     padding:1.15rem 1.3rem;box-shadow:0 22px 52px rgba(21,36,24,.2);
-    transform:rotate(1.8deg);
     animation:floaty 7s ease-in-out infinite;
   }
-  @keyframes floaty{0%,100%{transform:rotate(1.8deg) translateY(0)}50%{transform:rotate(1.8deg) translateY(-10px)}}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
   .listing-head{display:flex;align-items:center;gap:.55rem;margin-bottom:.7rem}
   .listing-head img{height:18px}
   .listing-head .mono{font-size:.56rem;color:var(--pine)}
